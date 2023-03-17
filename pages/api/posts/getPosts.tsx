@@ -7,10 +7,13 @@ export default async function handler(
  ) {
     if (req.method === "GET") {
         //Fetching all posts
+        
         try {
+            
             const data = await prisma.post.findMany({
                 include: {
                     user: true,
+                    comments: true,
 
                 },
                 orderBy: {

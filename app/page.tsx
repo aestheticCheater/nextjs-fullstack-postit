@@ -1,27 +1,38 @@
 "use client"
-import axios from "axios"
-import AddPost from "./components/AddPost"
-import {useQuery} from "react-query"
 
-//Fetch all posts 
+import Post from "./components/Post"
+import AddPost from "./components/AddPost"
+import { useQuery } from "react-query"
+import axios from "axios"
+import { PostsType } from "./types/Posts"
+
+//Fetch All posts
 const allPosts = async () => {
   const response = await axios.get("/api/posts/getPosts")
-   return response.data
+  return response.data
 }
 
-
 export default function Home() {
-  const { data, error, isLoading } = useQuery({
+  const { data, error, isLoading } = useQuery<PostsType[]>({
     queryFn: allPosts,
     queryKey: ["posts"],
   })
   if (error) return error
-  if (isLoading) return "Loading...."
+  if (isLoading) return "Loading....."
 
   return (
-    <main>
+    <div>
       <AddPost />
-      
-    </main>
+      {data?.map((post) => (
+        <Post
+          key={post.id}
+          id={post.id}
+          name={post.user.name}
+          avatar={post.user.image}
+          postTitle={post.title}
+          comments={post.comments}
+        />
+      ))}
+    </div>
   )
 }
